@@ -4,15 +4,45 @@ const w_title = document.querySelector("#w_title");// 제목
 const w_main = document.querySelector("#w_main"); //본문
 const saved = document.querySelector("#main_form saved");
 
+const TODOS_KEY = "todos";
+let toDos = []; //localstorage로 이용하여 저장하기위한 Array
+
+// const list_link = "listlink"; //링크대신쓸변수
+
 const title_list = document.querySelector("#title_list");//임시제목리스트보여주기
+
+
+function mainTo(dd) {//보여주기 버튼 눌렀을때 나오는 화면보여주기위한 함수
+    const li = dd.target.parentElement;
+    preview.innerText = li.name;//일단 대충이해감
+}
+
+
+function saveToDos() { //저장하기위한함수
+    localStorage.setItem(TODOS_KEY, JSON.stringify(toDos)); //string으로 만들어준다
+}
+
 
 
 function drawTo(event){ 
     const listMake = document.createElement("li"); //li생성
-    const span = document.createElement("span"); //span생성
+    listMake.name = event.main; //부모elementli에 객체안에 랜덤으로 만든 id를 넣어준다
+    const span = document.createElement("a"); //span생성
+    span.innerText = event.title; //여기title은 인자를 객체를 가져왔기때문
+    
+    const button = document.createElement("button");
+    button.innerText = '내용보기';
+    button.addEventListener('click', mainTo);
+    
     listMake.appendChild(span); //li자식으로span을 설정
-    span.innerText = event;
+    listMake.appendChild(button);
+
+     //set을 주어서 갈링크를 준다.
+    // span.classList.add(list_link); //span에 class를 추가하여 포인트주기
     title_list.appendChild(listMake); //ul(listMake)자식으로 li설정
+    // span.addEventListener('click', mainTo(event2));
+
+
 }
 
 
@@ -25,15 +55,34 @@ function enterText(event){
     } else { //title과 main에 값이 있으면, title을값을 바탕화면으로보낸다
         w_title.value = "";
         w_main.value = "";
-        drawTo(titleV);
+        const newTodoObj = { //객체로만듬
+            title:titleV,
+            main:mainV,
+            id: Date.now()
+        };
+        toDos.push(newTodoObj); //화면에 나오기전에 푸시를 먼저,push를 array가아닌 object로 주기위해
+        drawTo(newTodoObj); //일반 text가 아닌 객체를 준다
+        saveToDos(); //저장함수 실행
     }
     
 }
 
 
 
+
 main_form.addEventListener("click", enterText); //form의 이벤트리스너
 
 
+// function foreachToDos(item) { //forEach에 전할 함수
+    
+// }
 
+
+const savedToDos = localStorage.getItem(TODOS_KEY);   //localstorge값들을 변수로 준다
+
+if(savedToDos !== null) { //아무것도 없으면 null이 담겨져있기때문에 조건을준다
+    const parsedToDos = JSON.parse(savedToDos);//이역할은 set에서 string으로 저장한값들을 다시 배열로 주는
+    toDos = parsedToDos; //이것은 새로운값을 저장해도 기존의남아있는 localstorage전에있던것을 복원하기위해
+    parsedToDos.forEach(drawTo); //저장되어있는 Array에 각키값들에게 함수를 주는
+} 
 
