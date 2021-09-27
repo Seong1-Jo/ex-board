@@ -2,7 +2,9 @@ const preview = document.querySelector("h1"); //미리보기
 const main_form = document.querySelector("#main_form"); //메인form
 const w_title = document.querySelector("#w_title");// 제목
 const w_main = document.querySelector("#w_main"); //본문
-const saved = document.querySelector("#main_form saved");
+const saved = document.querySelector("#main_form saved"); //저장
+
+const fixed = document.querySelector("#fix_form");//수정버튼위한form
 
 const TODOS_KEY = "todos";
 let toDos = []; //localstorage로 이용하여 저장하기위한 Array
@@ -11,8 +13,10 @@ let toDos = []; //localstorage로 이용하여 저장하기위한 Array
 
 const title_list = document.querySelector("#title_list");//임시제목리스트보여주기
 
+const HIDE = "listHide"; //ul에 class이름부여하기위한 변수만들기
+const btnHIDE = "btnHide"; //저장버튼 class이름부여
 
-function mainTo(dd) {//보여주기 버튼 눌렀을때 나오는 화면보여주기위한 함수
+function mainTo(dd) {//보여주기 버튼 눌렀을때 나오는 화면보여주기위한 함수, dd는 우리가 클릭했을때 필요한이벤트, 나중에 console.log(dd)해서 확인하면 path에서 부모랑 관련된걸볼수있고 클릭target이 무엇인지를 체크할수 있다.
     const li = dd.target.parentElement;
     preview.innerText = li.name;//일단 대충이해감
 }
@@ -23,19 +27,46 @@ function saveToDos() { //저장하기위한함수
 }
 
 
+function fixTo(check) { //수정할것을 불러오기 위한 함수 
+    const li = check.target;
+    console.dir(li.id);
+    w_title.value = li.parentElement.id;
+    w_main.value = li.parentElement.name;
+    
+    title_list.classList.add(HIDE); //ul class에 이름부여
+    main_form.classList.add(btnHIDE); //button부모의 form에 class추가
+
+    const fixBtn = document.createElement("button"); //수정버튼생성
+    fixBtn.innerText = "수정";  
+    fixed.appendChild(fixBtn);
+
+
+
+    // fixBtn.addEventListener('click', fixIng);
+
+    
+    // !! console.dir(check.target.parentElement.innerText); //dir로 확인하면 자세하게 객체가보여주는데, 여기서 parentNode를 확인해보면 부모가누구인지 알려준다. target까지하면 target까지 알수있다 거기에 parentElement를 하면 부모가 누구인지 알수있다!!
+}
+
 
 function drawTo(event){ 
     const listMake = document.createElement("li"); //li생성
     listMake.name = event.main; //부모elementli에 객체안에 랜덤으로 만든 id를 넣어준다
+    listMake.id = event.title; //li에 아이디를 넣어준다
     const span = document.createElement("a"); //span생성
     span.innerText = event.title; //여기title은 인자를 객체를 가져왔기때문
     
     const button = document.createElement("button");
     button.innerText = '내용보기';
     button.addEventListener('click', mainTo);
+
+    const fixBtn = document.createElement("button"); //수정버튼만들기
+    fixBtn.innerText = '수정하기' ;
+    fixBtn.addEventListener('click', fixTo);
     
     listMake.appendChild(span); //li자식으로span을 설정
-    listMake.appendChild(button);
+    listMake.appendChild(button); 
+    listMake.appendChild(fixBtn);
 
      //set을 주어서 갈링크를 준다.
     // span.classList.add(list_link); //span에 class를 추가하여 포인트주기
@@ -56,7 +87,7 @@ function enterText(event){
         w_title.value = "";
         w_main.value = "";
         const newTodoObj = { //객체로만듬
-            title:titleV,
+            title:titleV, 
             main:mainV,
             id: Date.now()
         };

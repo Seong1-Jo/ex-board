@@ -4,3 +4,11 @@
 /*.listlink {
     cursor: pointer; cursor에 링크표시
 }*/
+
+.listHide { /*화면숨기기*/
+    display: none;
+}
+
+.btnHide {  /*버튼숨기기*/
+    display: none;
+}
