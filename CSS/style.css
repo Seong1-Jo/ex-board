@@ -1,11 +1,11 @@
 .writeB {
     resize: none; /*textarea의 사용자제한*/
 }
-/*.listlink {
-    cursor: pointer; cursor에 링크표시
-}*/
+#title_list {
+   /* cursor: pointer; /* cursor에 링크표시 */
+}
 
-.listHide { /*화면숨기기*/
+.listHide p { /*화면숨기기*/
     display: none;
 }
 
